@@ -4,6 +4,7 @@ namespace Iris\Dokogen\Feature;
 
 use Iris\Dokogen\Fields;
 use Iris\Dokogen\Template;
+use PhpOffice\PhpWord\TemplateProcessor;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -34,6 +35,36 @@ final class TemplateTest extends TestCase
                 ],
             ],
         ], $fields);
+    }
+
+    /**
+     * @test
+     */
+    function can_compile_a_document_batch()
+    {
+        $template = Template::load($this->stubsDir.'/basic_template.docx');
+     
+        $data = [
+            [
+                'values' => [
+                    'name' => 'John',
+                ],
+            ],
+            [
+                'values' => [
+                    'name' => 'Jane',
+                ],
+            ],
+            [
+                'values' => [
+                    'name' => 'Jim',
+                ],
+            ],        
+        ];
+
+        $processors = $template->batch($data);
+        $this->assertCount(3, $processors);
+        $this->assertContainsOnlyInstancesOf(TemplateProcessor::class, $processors);
     }
 
     /**

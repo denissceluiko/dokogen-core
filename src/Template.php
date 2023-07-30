@@ -27,6 +27,12 @@ class Template
         return $this;
     }
 
+    public function flush() : self
+    {
+        $this->fields->flush();
+        return $this;
+    }
+
     /**
      * Populates a string with values from stored value fields.
      * Ignores rows and blocks.
@@ -62,6 +68,25 @@ class Template
         }
 
         return $processor;
+    }
+
+    /**
+     * Batch compile documents
+     *
+     * @param array $data
+     * @return array
+     */
+    public function batch(array $data) : array
+    {
+        if (!array_is_list($data)) return [];
+
+        $processors = [];
+
+        foreach ($data as $document) {
+            $processors[] = $this->flush()->fill($document)->compile();
+        }
+
+        return $processors;
     }
 
     public function getFields() : Fields

@@ -170,6 +170,15 @@ class Fields
         return $this;
     }
 
+    public function flush() : self
+    {
+        $this->values = [];
+        $this->rowGroupValues = [];
+        $this->blockGroupValues = [];
+
+        return $this;
+    }
+
     public function values() : array
     {
         return $this->values;

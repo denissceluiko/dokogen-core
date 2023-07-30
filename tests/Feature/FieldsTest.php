@@ -202,4 +202,55 @@ final class FieldsTest extends TestCase
 
         $this->assertEquals($expected, $fields->toArray());
     }
+
+    /**
+     * @test
+     */
+    public function can_flush_all_data()
+    {
+        $source = [
+            'name', 
+            'block__customer', 
+            'block__customer.name', 
+            'block__customer.address', 
+            '/block__customer', 
+            'row__account.id', 
+            'row__account.name', 
+            'row__account.number',
+        ];
+
+        $data = [
+            'values' => [
+                'name' => 'John',
+            ],
+            'blocks' => [
+                'customer' => [
+                    [
+                        'name' => 'Jim',
+                        'address' => 'Shork st 4',
+                    ]
+                ],
+            ],
+            'rows' => [
+                'account' => [
+                    [
+                        'id' => 1, 
+                        'name' => 'Jane', 
+                        'number' => 123,
+                    ]
+                ],
+            ],
+        ];
+
+        $expected = [
+            'values' => [],
+            'rows' => [],
+            'blocks' => [],
+        ];
+
+        $fields = Fields::init($source)->fill($data);
+        $fields->flush();
+
+        $this->assertEquals($expected, $fields->toArray());
+    }
 }
