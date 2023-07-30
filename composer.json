@@ -1,5 +1,14 @@
 {
-    "name": "iris/dokogen",
+    "name": "dencel/dokogen-core",
+    "description": "Dokogen - A wrapper for phpoffice/phpword template processing functionality that enables you to generate batches of documents.",
+    "type": "library",
+    "authors": [
+        {
+            "name": "Deniss Celuiko",
+            "email": "me@celuiko.com",
+            "homepage": "https://celuiko.com/"
+        }
+    ],
     "autoload": {
         "psr-4": {
             "Iris\\Dokogen\\": "src/"
