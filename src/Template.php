@@ -89,6 +89,11 @@ class Template
         return $processors;
     }
 
+    public function hash($algo = 'sha256') : ?string
+    {
+        return hash_file($algo, $this->templatePath);
+    }
+
     public function getFields() : Fields
     {
         return $this->fields;

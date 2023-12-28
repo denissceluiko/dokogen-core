@@ -100,5 +100,17 @@ final class TemplateTest extends TestCase
         $string = $template->fill($data)->populate('${name} ${surname}.docx');
         $this->assertEquals('John Wick.docx', $string);
     }
+
+    /**
+     * @test
+     */
+    function can_compute_a_hash()
+    {
+        $template = Template::load($this->stubsDir.'/basic_template.docx');
+     
+        $hash = $template->hash();
+
+        $this->assertEquals('249bb90e383fef2028ba16671c7bbc559fdbe14e4b1003cdd60f1c03d6b7e14a', $hash);
+    }
     
 }

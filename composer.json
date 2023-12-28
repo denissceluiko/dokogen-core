@@ -23,6 +23,7 @@
         "phpunit/phpunit": "^10"
     },
     "require": {
+        "php": ">=8.2",
         "phpoffice/phpword": "^1.1"
     }
 }
