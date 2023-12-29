@@ -5,8 +5,8 @@ namespace Iris\Dokogen;
 class Fields
 {
     protected array $values = [];
-    protected array $rowGroups = [];
-    protected array $rowGroupValues = [];
+    protected array $tableGroups = [];
+    protected array $tableGroupValues = [];
     protected array $blockGroups = [];
     protected array $blockGroupValues = [];
 
@@ -28,9 +28,9 @@ class Fields
 
     protected function extract(array $variables) : void
     {
-        $rowMacros = $this->locateMacros('row', $variables);
-        $variables = $this->removeMacros($variables, $rowMacros);
-        $this->setRows($this->groupRowMacros($rowMacros));
+        $tableMacros = $this->locateMacros('row', $variables);
+        $variables = $this->removeMacros($variables, $tableMacros);
+        $this->setTables($this->groupTableMacros($tableMacros));
 
         $blockMacros = $this->locateMacros('block', $variables);
         $variables = $this->removeMacros($variables, $blockMacros);
@@ -41,8 +41,8 @@ class Fields
 
     protected function locateMacros($type, array $macros) : array
     {
-        $rows = preg_grep("/{$type}__(.*)\.?(.*)/i", $macros);
-        return array_values($rows);
+        $macros = preg_grep("/{$type}__(.*)\.?(.*)/i", $macros);
+        return array_values($macros);
     }
 
     protected function removeMacros(array $bindings, array $macros) : array
@@ -53,12 +53,12 @@ class Fields
     }
 
     /**
-     * Groups row macros
+     * Groups table macros
      *
      * @param array $macros
      * @return array
      */
-    protected function groupRowMacros(array $macros) : array
+    protected function groupTableMacros(array $macros) : array
     {
         $groups = [];
         foreach ($macros as $macro)
@@ -70,7 +70,7 @@ class Fields
                 list($macro, $cell) = explode('.', $macro);
                 $groups[$macro][$cell] = null;
             } else {
-                // Row macro has at least one element, the one initializing it.
+                // Table macro has at least one element, the one initializing it.
                 $groups[$macro][$macro] = null;
             }
         }
@@ -121,8 +121,8 @@ class Fields
             }
         }
 
-        if (isset($data['rows'])) {
-            foreach ($data['rows'] as $table => $values) {
+        if (isset($data['tables'])) {
+            foreach ($data['tables'] as $table => $values) {
                 $this->fillTable($table, $values);
             }
         }
@@ -139,13 +139,13 @@ class Fields
     public function fillTable(string $name, array $values) : self
     {
         // Skip if table doesn't exist
-        if (!isset($this->rowGroups[$name])) return $this;
+        if (!isset($this->tableGroups[$name])) return $this;
 
         if (!array_is_list($values)) {
             $values = [$values];
         }
 
-        $this->rowGroupValues[$name] = $values;
+        $this->tableGroupValues[$name] = $values;
         return $this;
     }
 
@@ -162,9 +162,9 @@ class Fields
         return $this;
     }
 
-    protected function setRows(array $rows) : self
+    protected function setTables(array $tables) : self
     {
-        $this->rowGroups = $rows;
+        $this->tableGroups = $tables;
         return $this;
     }
     
@@ -177,7 +177,7 @@ class Fields
     public function flush() : self
     {
         $this->values = [];
-        $this->rowGroupValues = [];
+        $this->tableGroupValues = [];
         $this->blockGroupValues = [];
 
         return $this;
@@ -190,7 +190,7 @@ class Fields
 
     public function tables() : array
     {
-        return $this->rowGroupValues;
+        return $this->tableGroupValues;
     }
     
     public function blocks() : array
@@ -202,7 +202,7 @@ class Fields
     {
         return [
             'blocks'    => array_map('array_keys', $this->blockGroups),
-            'rows'      => array_map('array_keys', $this->rowGroups),
+            'tables'      => array_map('array_keys', $this->tableGroups),
             'values'    => array_keys($this->values),
         ];
     }
@@ -211,7 +211,7 @@ class Fields
     {
         return [
             'blocks'    => $this->blockGroupValues,
-            'rows'      => $this->rowGroupValues,
+            'tables'      => $this->tableGroupValues,
             'values'    => $this->values,
         ];
     }
@@ -219,7 +219,7 @@ class Fields
     public function isFormatted(array $data)
     {
         return isset($data['blocks']) && is_array($data['blocks'])
-            && isset($data['rows']) && is_array($data['rows'])
+            && isset($data['tables']) && is_array($data['tables'])
             && isset($data['values']) && is_array($data['values']);
     }
 }

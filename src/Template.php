@@ -35,7 +35,7 @@ class Template
 
     /**
      * Populates a string with values from stored value fields.
-     * Ignores rows and blocks.
+     * Ignores tables and blocks.
      */
     public function populate(string $string) : string
     {

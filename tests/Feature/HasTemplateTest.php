@@ -37,7 +37,7 @@ final class HasTemplateTest extends TestCase
             "key" => "value",
         ]);
 
-        $this->assertEquals(['key' => 'value'], print_r($this->fields()->values()));
+        $this->assertEquals(['key' => 'value'], $this->fields()->values());
     }
 
    

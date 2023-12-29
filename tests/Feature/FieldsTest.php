@@ -28,7 +28,7 @@ final class FieldsTest extends TestCase
 
         $expected = [
             'values' => ['name'],
-            'rows' => [
+            'tables' => [
                 'account' => ['id', 'name', 'number'],
             ],
             'blocks' => [
@@ -56,7 +56,7 @@ final class FieldsTest extends TestCase
 
         $expected = [
             'values' => ['name' => 'John'],
-            'rows' => [],
+            'tables' => [],
             'blocks' => [],
         ];
 
@@ -83,7 +83,7 @@ final class FieldsTest extends TestCase
         ];
 
         $expected = [
-            'rows' => [
+            'tables' => [
                 'account' => [
                     [
                         'id' => 1, 
@@ -129,7 +129,7 @@ final class FieldsTest extends TestCase
                 ],
             ],
             'values' => [],
-            'rows' => [],
+            'tables' => [],
         ];
 
         $fields = Fields::init($source)->fillBlock('customer', $data);
@@ -166,7 +166,7 @@ final class FieldsTest extends TestCase
                     ]
                 ],
             ],
-            'rows' => [
+            'tables' => [
                 'account' => [
                     [
                         'id' => 1, 
@@ -179,7 +179,7 @@ final class FieldsTest extends TestCase
 
         $expected = [
             'values' => ['name' => 'John'],
-            'rows' => [
+            'tables' => [
                 'account' => [
                     [
                         'id' => 1, 
@@ -231,7 +231,7 @@ final class FieldsTest extends TestCase
                     ]
                 ],
             ],
-            'rows' => [
+            'tables' => [
                 'account' => [
                     [
                         'id' => 1, 
@@ -244,7 +244,7 @@ final class FieldsTest extends TestCase
 
         $expected = [
             'values' => [],
-            'rows' => [],
+            'tables' => [],
             'blocks' => [],
         ];
 

@@ -24,7 +24,7 @@ final class TemplateTest extends TestCase
 
         $this->assertEquals([
             'values' => ['name'],
-            'rows' => [
+            'tables' => [
                 'account' => [
                     'id', 'name', 'number'
                 ],
