@@ -28,7 +28,7 @@ class Fields
 
     protected function extract(array $variables) : void
     {
-        $tableMacros = $this->locateMacros('row', $variables);
+        $tableMacros = $this->locateMacros('table', $variables);
         $variables = $this->removeMacros($variables, $tableMacros);
         $this->setTables($this->groupTableMacros($tableMacros));
 
@@ -63,8 +63,8 @@ class Fields
         $groups = [];
         foreach ($macros as $macro)
         {
-            // Remove the 'row__' prefix
-            $macro = substr($macro, strlen('row__'));
+            // Remove the 'table__' prefix
+            $macro = substr($macro, strlen('table__'));
 
             if (strpos($macro, '.')) {
                 list($macro, $cell) = explode('.', $macro);

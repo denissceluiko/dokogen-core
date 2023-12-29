@@ -21,9 +21,9 @@ final class FieldsTest extends TestCase
             'block__customer.name', 
             'block__customer.address', 
             '/block__customer', 
-            'row__account.id', 
-            'row__account.name', 
-            'row__account.number',
+            'table__account.id', 
+            'table__account.name', 
+            'table__account.number',
         ];
 
         $expected = [
@@ -71,9 +71,9 @@ final class FieldsTest extends TestCase
     public function can_fill_tables()
     {
         $source = [
-            'row__account.id', 
-            'row__account.name', 
-            'row__account.number',
+            'table__account.id', 
+            'table__account.name', 
+            'table__account.number',
         ];
 
         $data = [
@@ -149,9 +149,9 @@ final class FieldsTest extends TestCase
             'block__customer.name', 
             'block__customer.address', 
             '/block__customer', 
-            'row__account.id', 
-            'row__account.name', 
-            'row__account.number',
+            'table__account.id', 
+            'table__account.name', 
+            'table__account.number',
         ];
 
         $data = [
@@ -214,9 +214,9 @@ final class FieldsTest extends TestCase
             'block__customer.name', 
             'block__customer.address', 
             '/block__customer', 
-            'row__account.id', 
-            'row__account.name', 
-            'row__account.number',
+            'table__account.id', 
+            'table__account.name', 
+            'table__account.number',
         ];
 
         $data = [
