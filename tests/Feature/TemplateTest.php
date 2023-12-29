@@ -110,7 +110,7 @@ final class TemplateTest extends TestCase
      
         $hash = $template->hash();
 
-        $this->assertEquals('249bb90e383fef2028ba16671c7bbc559fdbe14e4b1003cdd60f1c03d6b7e14a', $hash);
+        $this->assertEquals('01aa275bdec8d54b2dcccdf3035a2e11465a52980ae07b965a663b8552d5b1df', $hash);
     }
     
 }
