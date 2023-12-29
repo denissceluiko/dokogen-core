@@ -10,14 +10,18 @@ class Fields
     protected array $blockGroups = [];
     protected array $blockGroupValues = [];
 
-    public function __construct(array $variables = null)
+    public function __construct(Fields|array $variables = null)
     {
-        if (is_array($variables)) {
+        if ($variables instanceof Fields) {
+            $this->fill($variables);
+        } elseif (is_array($variables) && $this->isFormatted($variables)) {
+            $this->fill($variables);
+        } elseif (is_array($variables)) {
             $this->extract($variables);
         }
     }
 
-    public static function init(array $variables = null) : static
+    public static function init(Fields|array $variables = null) : static
     {
         return new static($variables);
     }
@@ -210,5 +214,12 @@ class Fields
             'rows'      => $this->rowGroupValues,
             'values'    => $this->values,
         ];
+    }
+
+    public function isFormatted(array $data)
+    {
+        return isset($data['blocks']) && is_array($data['blocks'])
+            && isset($data['rows']) && is_array($data['rows'])
+            && isset($data['values']) && is_array($data['values']);
     }
 }
