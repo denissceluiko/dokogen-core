@@ -253,4 +253,46 @@ final class FieldsTest extends TestCase
 
         $this->assertEquals($expected, $fields->toArray());
     }
+    
+    /**
+     * @test
+     */
+    public function can_produce_a_blank()
+    {
+        $source = [
+            'name', 
+            'title', 
+            'block__customer', 
+            'block__customer.name', 
+            'block__customer.address', 
+            '/block__customer', 
+            'table__account.id', 
+            'table__account.name', 
+            'table__account.number',
+        ];
+
+        $expected = [
+            'values' => [
+                'name' => null,
+                'title' => null,
+            ],
+            'tables' => [
+                'account' => [
+                    'id' => null,
+                    'name' => null,
+                    'number' => null,
+                ],
+            ],
+            'blocks' => [
+                'customer' => [
+                    'name' => null,
+                    'address' => null,
+                ],
+            ],
+        ];
+
+        $fields = Fields::init($source);
+
+        $this->assertEquals($expected, $fields->blank());
+    }
 }

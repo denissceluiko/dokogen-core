@@ -26,6 +26,13 @@ class Fields
         return new static($variables);
     }
 
+    /**
+     * Expected contents of the input $variables is the output of 
+     * PhpOffice\PhpWord\TemplateProcessor::getVariables()
+     *
+     * @param array $variables
+     * @return void
+     */
     protected function extract(array $variables) : void
     {
         $tableMacros = $this->locateMacros('table', $variables);
@@ -198,6 +205,12 @@ class Fields
         return $this->blockGroupValues;
     }
 
+    /**
+     * Returns an array containing names of all the fillable values, 
+     * tables and blocks.
+     *
+     * @return array
+     */
     public function names() : array
     {
         return [
@@ -207,12 +220,32 @@ class Fields
         ];
     }
 
+    /**
+     * Returns all the filled values with their corresponding keys.
+     *
+     * @return array
+     */
     public function toArray() : array
     {
         return [
             'blocks'    => $this->blockGroupValues,
-            'tables'      => $this->tableGroupValues,
+            'tables'    => $this->tableGroupValues,
             'values'    => $this->values,
+        ];
+    }
+
+    /**
+     * Returns a blank fields object containing all the keys
+     * of the current fields and all their values set to null.
+     * 
+     * @return void
+     */
+    public function blank() : array
+    {
+        return [
+            'blocks'    => $this->blockGroups,
+            'tables'    => $this->tableGroups,
+            'values'    => array_fill_keys(array_keys($this->values), null),
         ];
     }
 
