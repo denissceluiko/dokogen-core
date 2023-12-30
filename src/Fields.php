@@ -13,9 +13,9 @@ class Fields
     public function __construct(Fields|array $variables = null)
     {
         if ($variables instanceof Fields) {
-            $this->fill($variables);
+            $this->fromSibling($variables);
         } elseif (is_array($variables) && $this->isFormatted($variables)) {
-            $this->fill($variables);
+            $this->fromArray($variables);
         } elseif (is_array($variables)) {
             $this->extract($variables);
         }
@@ -44,6 +44,20 @@ class Fields
         $this->setBlocks($this->groupBlockMacros($blockMacros));
 
         $this->fillValues(array_fill_keys($variables, null));
+    }
+
+    protected function fromArray(array $source) : void
+    {
+        $this->setTables($source['tables']);
+        $this->setBlocks($source['blocks']);
+        $this->fillValues($source['values']);
+    }
+
+    protected function fromSibling(Fields $source) : void
+    {
+        $this->setTables($source->tableGroups);
+        $this->setBlocks($source->blockGroups);
+        $this->fillValues($source->values);
     }
 
     protected function locateMacros($type, array $macros) : array

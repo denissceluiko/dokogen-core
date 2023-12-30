@@ -295,4 +295,66 @@ final class FieldsTest extends TestCase
 
         $this->assertEquals($expected, $fields->blank());
     }
+
+    /**
+     * @test
+     */
+    public function can_init_from_array()
+    {
+        $expected = [
+            'values' => [
+                'name' => null,
+                'title' => null,
+            ],
+            'tables' => [
+                'account' => [
+                    'id' => null,
+                    'name' => null,
+                    'number' => null,
+                ],
+            ],
+            'blocks' => [
+                'customer' => [
+                    'name' => null,
+                    'address' => null,
+                ],
+            ],
+        ];
+
+        $fields = Fields::init($expected);
+
+        $this->assertEquals($expected, $fields->blank());
+    }
+
+    
+    /**
+     * @test
+     */
+    public function can_init_from_sibling()
+    {
+        $expected = [
+            'values' => [
+                'name' => null,
+                'title' => null,
+            ],
+            'tables' => [
+                'account' => [
+                    'id' => null,
+                    'name' => null,
+                    'number' => null,
+                ],
+            ],
+            'blocks' => [
+                'customer' => [
+                    'name' => null,
+                    'address' => null,
+                ],
+            ],
+        ];
+
+        $original = Fields::init($expected);
+        $copy = Fields::init($original);
+
+        $this->assertEquals($expected, $copy->blank());
+    }
 }
