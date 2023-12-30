@@ -46,7 +46,7 @@ class Template
 
         for ($i=0; $i<count($matches[0]); $i++)
         {
-            $result = str_replace($matches[0][$i], $values[$matches[1][$i]], $result);
+            $result = str_replace($matches[0][$i], $values[$matches[1][$i]] ?? $matches[0][$i], $result);
         }
 
         return $result;

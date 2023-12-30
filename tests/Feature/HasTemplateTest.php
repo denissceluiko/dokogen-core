@@ -13,7 +13,7 @@ final class HasTemplateTest extends TestCase
 {
     use HasTemplate;
 
-    public Fields $bindings;
+    public array $bindings;
 
     public static ?string $fieldStorage = 'bindings';
 
@@ -33,9 +33,12 @@ final class HasTemplateTest extends TestCase
      */
     public function can_retrieve_values()
     {
-        $this->bindings = Fields::init()->fillValues([
+        $this->bindings = ['key'];
+        
+        $this->fields()->fillValues([
             "key" => "value",
         ]);
+
 
         $this->assertEquals(['key' => 'value'], $this->fields()->values());
     }

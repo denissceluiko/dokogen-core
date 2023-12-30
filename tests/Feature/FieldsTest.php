@@ -44,6 +44,26 @@ final class FieldsTest extends TestCase
     /**
      * @test
      */
+    public function can_init_from_one_field()
+    {
+        $source = [
+            'name', 
+        ];
+
+        $expected = [
+            'values' => ['name'],
+            'tables' => [],
+            'blocks' => [],
+        ];
+
+        $fields = Fields::init($source);
+
+        $this->assertEquals($expected, $fields->names());
+    }
+
+    /**
+     * @test
+     */
     public function can_fill_values()
     {
         $source = [
@@ -52,6 +72,31 @@ final class FieldsTest extends TestCase
 
         $values = [
             'name' => 'John',
+        ];
+
+        $expected = [
+            'values' => ['name' => 'John'],
+            'tables' => [],
+            'blocks' => [],
+        ];
+
+        $fields = Fields::init($source)->fillValues($values);
+
+        $this->assertEquals($expected, $fields->toArray());
+    }
+
+    /**
+     * @test
+     */
+    public function will_not_fill_nonexistent_keys()
+    {
+        $source = [
+            'name',
+        ];
+
+        $values = [
+            'name' => 'John',
+            'surname' => 'Wick',
         ];
 
         $expected = [
@@ -80,6 +125,44 @@ final class FieldsTest extends TestCase
             'id' => 1, 
             'name' => 'Jane', 
             'number' => 123,
+        ];
+
+        $expected = [
+            'tables' => [
+                'account' => [
+                    [
+                        'id' => 1, 
+                        'name' => 'Jane', 
+                        'number' => 123,
+                    ],
+                ],
+            ],
+            'values' => [],
+            'blocks' => [],
+        ];
+
+        $fields = Fields::init($source)->fillTable('account', $data);
+        $fields->fillTable('account2', $data);
+
+        $this->assertEquals($expected, $fields->toArray());
+    }
+
+    /**
+     * @test
+     */
+    public function will_not_fill_nonexistent_fields_in_tables()
+    {
+        $source = [
+            'table__account.id', 
+            'table__account.name', 
+            'table__account.number',
+        ];
+
+        $data = [
+            'id' => 1, 
+            'name' => 'Jane', 
+            'number' => 123,
+            'type' => 'user',
         ];
 
         $expected = [
@@ -141,6 +224,43 @@ final class FieldsTest extends TestCase
     /**
      * @test
      */
+    public function will_not_fill_nonexistent_fields_in_blocks()
+    {
+        $source = [
+            'block__customer', 
+            'block__customer.name', 
+            'block__customer.address', 
+            '/block__customer', 
+        ];
+
+        $data = [
+            'name' => 'Jim',
+            'surname' => 'Beam',
+            'address' => 'Shork st 4',
+        ];
+
+        $expected = [
+            'blocks' => [
+                'customer' => [
+                    [
+                        'name' => 'Jim',
+                        'address' => 'Shork st 4',
+                    ]
+                ],
+            ],
+            'values' => [],
+            'tables' => [],
+        ];
+
+        $fields = Fields::init($source)->fillBlock('customer', $data);
+        $fields->fillBlock('customer2', $data);
+
+        $this->assertEquals($expected, $fields->toArray());
+    }
+
+    /**
+     * @test
+     */
     public function can_fill_all_data()
     {
         $source = [
@@ -174,6 +294,65 @@ final class FieldsTest extends TestCase
                         'number' => 123,
                     ]
                 ],
+            ],
+        ];
+
+        $expected = [
+            'values' => ['name' => 'John'],
+            'tables' => [
+                'account' => [
+                    [
+                        'id' => 1, 
+                        'name' => 'Jane', 
+                        'number' => 123,
+                    ]
+                ],
+            ],
+            'blocks' => [
+                'customer' => [
+                    [
+                        'name' => 'Jim',
+                        'address' => 'Shork st 4',
+                    ]
+                ],
+            ],
+        ];
+
+        $fields = Fields::init($source)->fill($data);
+
+        $this->assertEquals($expected, $fields->toArray());
+    }
+    
+    /**
+     * @test
+     */
+    public function can_fill_ungrouped_data()
+    {
+        $source = [
+            'name', 
+            'block__customer', 
+            'block__customer.name', 
+            'block__customer.address', 
+            '/block__customer', 
+            'table__account.id', 
+            'table__account.name', 
+            'table__account.number',
+        ];
+
+        $data = [
+            'name' => 'John',
+            'customer' => [
+                [
+                    'name' => 'Jim',
+                    'address' => 'Shork st 4',
+                ]
+            ],
+            'account' => [
+                [
+                    'id' => 1, 
+                    'name' => 'Jane', 
+                    'number' => 123,
+                ]
             ],
         ];
 

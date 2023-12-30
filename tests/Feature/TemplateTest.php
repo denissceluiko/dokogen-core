@@ -94,11 +94,26 @@ final class TemplateTest extends TestCase
      
         $data = $template->getFields()->fillValues([
             'name' => 'John',
+        ]);
+
+        $string = $template->fill($data)->populate('${name}.docx');
+        $this->assertEquals('John.docx', $string);
+    }
+
+    /**
+     * @test
+     */
+    function will_not_populate_nonexistent_keys()
+    {
+        $template = Template::load($this->stubsDir.'/basic_template.docx');
+     
+        $data = $template->getFields()->fillValues([
+            'name' => 'John',
             'surname' => 'Wick',
         ]);
 
         $string = $template->fill($data)->populate('${name} ${surname}.docx');
-        $this->assertEquals('John Wick.docx', $string);
+        $this->assertEquals('John ${surname}.docx', $string);
     }
 
     /**

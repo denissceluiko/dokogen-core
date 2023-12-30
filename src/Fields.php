@@ -4,6 +4,7 @@ namespace Iris\Dokogen;
 
 class Fields
 {
+    protected array $keys = [];
     protected array $values = [];
     protected array $tableGroups = [];
     protected array $tableGroupValues = [];
@@ -43,6 +44,7 @@ class Fields
         $variables = $this->removeMacros($variables, $blockMacros);
         $this->setBlocks($this->groupBlockMacros($blockMacros));
 
+        $this->setKeys($variables);
         $this->fillValues(array_fill_keys($variables, null));
     }
 
@@ -50,14 +52,14 @@ class Fields
     {
         $this->setTables($source['tables']);
         $this->setBlocks($source['blocks']);
-        $this->fillValues($source['values']);
+        $this->setKeys(array_keys($source['values']));
     }
 
     protected function fromSibling(Fields $source) : void
     {
         $this->setTables($source->tableGroups);
         $this->setBlocks($source->blockGroups);
-        $this->fillValues($source->values);
+        $this->setKeys($source->keys);
     }
 
     protected function locateMacros($type, array $macros) : array
@@ -129,9 +131,27 @@ class Fields
     public function fill(Fields|array $data) : self
     {
         if ($data instanceof Fields) {
-            $data = $data->toArray();
+            $this->fillFormatted($data->toArray());
+        } elseif ($this->isFormatted($data)) {
+            $this->fillFormatted($data);
         }
 
+        foreach ($data as $k => $v) {
+            // Table or block
+            if (is_array($v)) {
+                $this->fillTable($k, $v);
+                $this->fillBlock($k, $v);
+            }
+
+            $this->fillValues([$k => $v]);
+        }
+
+
+        return $this;
+    }
+
+    protected function fillFormatted(array $data)
+    {
         if (isset($data['values'])) {
             $this->fillValues($data['values']);
         }
@@ -147,13 +167,16 @@ class Fields
                 $this->fillTable($table, $values);
             }
         }
-
-        return $this;
     }
 
     public function fillValues(array $values) : self
     {
-        $this->values = $values;
+        foreach ($values as $k => $v) {
+            if (!in_array($k, $this->keys)) continue;
+
+            $this->values[$k] = $v;
+        }
+
         return $this;
     }
 
@@ -166,7 +189,18 @@ class Fields
             $values = [$values];
         }
 
-        $this->tableGroupValues[$name] = $values;
+        foreach ($values as $entry) {
+            $newRow = [];
+
+            foreach ($entry as $column => $value) {
+                if (!in_array($column, $this->tableGroups[$name])) continue;
+                
+                $newRow[$column] = $value;
+            }
+            
+            $this->tableGroupValues[$name][] = $newRow;
+        }       
+        
         return $this;
     }
 
@@ -179,19 +213,67 @@ class Fields
             $values = [$values];
         }
 
-        $this->blockGroupValues[$name] = $values;
+        foreach ($values as $entry) {
+            $newCopy = [];
+
+            foreach ($entry as $field => $value) {
+                if (!in_array($field, $this->blockGroups[$name])) continue;
+                
+                $newCopy[$field] = $value;
+            }
+            
+            $this->blockGroupValues[$name][] = $newCopy;
+        }  
+
         return $this;
     }
 
+    protected function setKeys(array $keys) : self
+    {
+        // Drop pre-existing values
+        if (!array_is_list($keys)) {
+            $keys = array_keys($keys);
+        }
+
+        $this->keys = $keys;
+        return $this;
+    }
+
+    /**
+     * Expects a map of tables
+     *
+     * @param array $tables
+     * @return self
+     */
     protected function setTables(array $tables) : self
     {
-        $this->tableGroups = $tables;
+        $this->tableGroups = [];
+
+        foreach ($tables as $name => $columns) {
+            // Drop pre-existing values
+            if (!array_is_list($columns)) {
+                $columns = array_keys($columns);
+            }
+
+            $this->tableGroups[$name] = $columns;
+        }
+        
         return $this;
     }
     
     protected function setBlocks(array $blocks) : self
     {
-        $this->blockGroups = $blocks;
+        $this->blockGroups = [];
+
+        foreach ($blocks as $name => $fields) {
+            // Drop pre-existing values
+            if (!array_is_list($fields)) {
+                $fields = array_keys($fields);
+            }
+
+            $this->blockGroups[$name] = $fields;
+        }
+
         return $this;
     }
 
@@ -228,9 +310,9 @@ class Fields
     public function names() : array
     {
         return [
-            'blocks'    => array_map('array_keys', $this->blockGroups),
-            'tables'      => array_map('array_keys', $this->tableGroups),
-            'values'    => array_keys($this->values),
+            'blocks'    => $this->blockGroups,
+            'tables'    => $this->tableGroups,
+            'values'    => $this->keys,
         ];
     }
 
@@ -257,9 +339,9 @@ class Fields
     public function blank() : array
     {
         return [
-            'blocks'    => $this->blockGroups,
-            'tables'    => $this->tableGroups,
-            'values'    => array_fill_keys(array_keys($this->values), null),
+            'blocks'    => array_map(fn($block) => array_fill_keys($block, null), $this->blockGroups),
+            'tables'    => array_map(fn($table) => array_fill_keys($table, null), $this->tableGroups),
+            'values'    => array_fill_keys($this->keys, null),
         ];
     }
 
