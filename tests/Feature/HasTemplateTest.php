@@ -15,7 +15,7 @@ final class HasTemplateTest extends TestCase
 
     public Fields $bindings;
 
-    public ?string $fieldStorage = 'bindings';
+    public static ?string $fieldStorage = 'bindings';
 
     /**
      * @test
@@ -23,9 +23,9 @@ final class HasTemplateTest extends TestCase
     public function can_init_field_storage_variable()
     {
         $this->assertEquals('bindings', $this->getFieldStorageKey());
-        $this->fieldStorage = null;
-        $this->assertEquals('fields', $this->getFieldStorageKey());
-        $this->fieldStorage = 'bindings';
+        self::$fieldStorage = null;
+        $this->assertEquals('template_fields', $this->getFieldStorageKey());
+        self::$fieldStorage = 'bindings';
     }
     
     /**

@@ -19,6 +19,6 @@ trait HasTemplate
 
     public function getFieldStorageKey() : string
     {
-        return $this->fieldStorage ?? 'fields';
+        return self::$fieldStorage ?? 'template_fields';
     }
 }
