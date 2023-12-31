@@ -2,8 +2,8 @@
 
 namespace Iris\Dokogen\Feature;
 
-use Iris\Dokogen\Fields;
 use Iris\Dokogen\Traits\HasTemplate;
+use PhpOffice\PhpWord\TemplateProcessor;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -43,5 +43,26 @@ final class HasTemplateTest extends TestCase
         $this->assertEquals(['key' => 'value'], $this->fields()->values());
     }
 
-   
+    public function getTemplatePath(): string
+    {
+        return __DIR__.'/../stubs/basic_template.docx';
+    }
+
+    /**
+     * @test
+     */
+    public function can_compile_document()
+    {
+        $this->bindings = ['key'];
+        
+        $this->fields()->fill([
+            'name' => 'Jeremy',
+        ]);
+
+        $result = $this->compile();
+
+
+        $this->assertTrue($result instanceof TemplateProcessor);
+    }
+
 }
