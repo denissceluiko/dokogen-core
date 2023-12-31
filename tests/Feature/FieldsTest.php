@@ -536,4 +536,69 @@ final class FieldsTest extends TestCase
 
         $this->assertEquals($expected, $copy->blank());
     }
+
+    /**
+     * @test
+     */
+    public function can_export_tables()
+    {
+        $source = [
+            'table__account.id', 
+            'table__account.name', 
+            'table__account.number',
+        ];
+
+        $data = [
+            'id' => 1, 
+            'name' => 'Jane', 
+            'number' => 123,
+        ];
+
+        $expected = [
+            'account' => [
+                [
+                    'table__account.id' => 1, 
+                    'table__account.name' => 'Jane', 
+                    'table__account.number' => 123,
+                ],
+            ],
+        ];
+
+        $fields = Fields::init($source)->fillTable('account', $data);
+        $fields->fillTable('account2', $data);
+
+        $this->assertEquals($expected, $fields->tables(fullPath: true));
+    }
+
+    /**
+     * @test
+     */
+    public function can_export_blocks()
+    {
+        $source = [
+            'block__customer', 
+            'block__customer.name', 
+            'block__customer.address', 
+            '/block__customer', 
+        ];
+
+        $data = [
+            'name' => 'Jim',
+            'address' => 'Shork st 4',
+        ];
+
+        $expected = [
+            'customer' => [
+                [
+                    'block__customer.name' => 'Jim',
+                    'block__customer.address' => 'Shork st 4',
+                ]
+            ],
+        ];
+
+        $fields = Fields::init($source)->fillBlock('customer', $data);
+        $fields->fillBlock('customer2', $data);
+
+        $this->assertEquals($expected, $fields->blocks(fullPath: true));
+    }
 }

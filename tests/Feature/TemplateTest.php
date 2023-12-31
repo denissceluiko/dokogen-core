@@ -88,6 +88,91 @@ final class TemplateTest extends TestCase
     /**
      * @test
      */
+    function can_compile_a_document_with_tables()
+    {
+        $template = Template::load($this->stubsDir.'/basic_template.docx');
+     
+        $template->fill([
+            'name' => 'John',
+            'account' => [
+                'id' => 12,
+                'name' => 'Trash Panda',
+                'number' => '12-X45',
+            ]
+        ]);
+
+        $processor = $template->compile();
+        $path = 'can_compile_a_document_with_tables.docx';
+        $processor->saveAs($path);
+        $this->assertFileExists($path);
+        unlink($path);
+    }
+
+    /**
+     * @test
+     */
+    function can_compile_a_document_with_blocks()
+    {
+        $template = Template::load($this->stubsDir.'/basic_template.docx');
+     
+        $template->fill([
+            'name' => 'John',
+            'customer' => [
+                'name' => 'Trash Panda',
+                'address' => 'Mazpisanu 12-X45',
+            ]
+        ]);
+
+        $processor = $template->compile();
+        $path = 'can_compile_a_document_with_blocks.docx';
+        $processor->saveAs($path);
+        $this->assertFileExists($path);
+        unlink($path);
+    }
+
+    /**
+     * @test
+     */
+    function can_compile_a_document_with_all()
+    {
+        $template = Template::load($this->stubsDir.'/basic_template.docx');
+     
+        $template->fill([
+            'name' => 'John Sho',
+            'account' => [
+                [
+                    'id' => 12,
+                    'name' => 'Trash Panda',
+                    'number' => '12-X45',
+                ],
+                [
+                    'id' => 14,
+                    'name' => 'Ra Ccoon',
+                    'number' => '17-X4A',
+                ],
+            ],
+            'customer' => [
+                [
+                    'name' => 'Trash Panda',
+                    'address' => 'Mazpisanu 12-X45',
+                ],
+                [
+                    'name' => 'Cleatus Yeetus',
+                    'address' => 'Neetus 5',
+                ],
+            ]
+        ]);
+
+        $processor = $template->compile();
+        $path = 'can_compile_a_document_with_all.docx';
+        $processor->saveAs($path);
+        $this->assertFileExists($path);
+        unlink($path);
+    }
+
+    /**
+     * @test
+     */
     function can_populate_a_string()
     {
         $template = Template::load($this->stubsDir.'/basic_template.docx');

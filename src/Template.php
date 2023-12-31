@@ -57,14 +57,17 @@ class Template
         $processor = new TemplateProcessor($this->templatePath);
         $processor->setValues($this->fields->values());
 
-        foreach ($this->fields->tables() as $table => $values)
+        foreach ($this->fields->tables(fullPath: true) as $table => $values)
         {
-            $processor->cloneRowAndSetValues($table, $values);
+            $identifier = $this->fields->tableIdFor($table);
+            $processor->cloneRowAndSetValues($identifier, $values);
         }
 
-        foreach ($this->fields->blocks() as $block => $values)
+        // TBD: further investiogation; doesn't work properly.
+        foreach ($this->fields->blocks(fullPath: true) as $block => $values)
         {
-            $processor->cloneBlock($block, 0, true, false, $values);
+            $identifier = $this->fields->blockIdFor($block);
+            $processor->cloneBlock($identifier, 0, true, false, $values);
         }
 
         return $processor;

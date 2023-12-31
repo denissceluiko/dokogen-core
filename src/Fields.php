@@ -291,14 +291,54 @@ class Fields
         return $this->values;
     }
 
-    public function tables() : array
+    public function tables(bool $fullPath = false) : array
     {
-        return $this->tableGroupValues;
+        return $fullPath ? $this->tablesForCloning() : $this->tableGroupValues;
+    }
+
+    protected function tablesforCloning() : array
+    {
+        $tables = [];
+
+        foreach ($this->tableGroupValues as $table => $rows) {
+            foreach ($rows as $index => $columns) {
+                $tables[$table][$index] = self::prefixArrayKeys($columns, 'table__'.$table.'.');
+            }
+        }
+
+        return $tables;
     }
     
-    public function blocks() : array
+    public function blocks(bool $fullPath = false) : array
     {
-        return $this->blockGroupValues;
+        return $fullPath ? $this->blocksforCloning() : $this->blockGroupValues;
+    }
+
+    protected function blocksforCloning() : array
+    {
+        $blocks = [];
+
+        foreach ($this->blockGroupValues as $block => $groups) {
+            foreach ($groups as $index => $fields) {
+                $blocks[$block][$index] = self::prefixArrayKeys($fields, 'block__'.$block.'.');
+            }
+        }
+
+        return $blocks;
+    }
+
+    public function tableIdFor(string $table) : ?string
+    {
+        if (!isset($this->tableGroups[$table])) return null;
+
+        return 'table__'.$table.'.'.$this->tableGroups[$table][0];
+    }
+
+    public function blockIdFor(string $block) : ?string
+    {
+        if (!isset($this->blockGroups[$block])) return null;
+
+        return 'block__'.$block;
     }
 
     /**
@@ -350,5 +390,12 @@ class Fields
         return isset($data['blocks']) && is_array($data['blocks'])
             && isset($data['tables']) && is_array($data['tables'])
             && isset($data['values']) && is_array($data['values']);
+    }
+
+    public static function prefixArrayKeys(array $array, string $prefix) {
+        return array_combine(
+            array_map(fn($key) => $prefix . $key, array_keys($array)),
+            $array
+        );
     }
 }
