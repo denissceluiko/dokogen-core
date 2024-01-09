@@ -614,6 +614,61 @@ final class FieldsTest extends TestCase
     /**
      * @test
      */
+    public function can_init_from_names()
+    {
+        $source = [
+            'values' => [
+                'name' => null,
+                'title' => null,
+            ],
+            'tables' => [
+                'account' => [
+                    'id' => null,
+                    'name' => null,
+                    'number' => null,
+                ],
+            ],
+            'blocks' => [
+                'customer' => [
+                    'name' => null,
+                    'address' => null,
+                ],
+            ],
+        ];
+
+        $expected = [
+            'values' => [
+                'name' => null,
+                'title' => null,
+            ],
+            'tables' => [
+                'account' => [
+                    [
+                        'id' => null,
+                        'name' => null,
+                        'number' => null,
+                    ]
+                ],
+            ],
+            'blocks' => [
+                'customer' => [
+                    [
+                        'name' => null,
+                        'address' => null,
+                    ]
+                ],
+            ],
+        ];
+
+        $fields = Fields::init($source);
+        $copy = Fields::init($fields->names());
+
+        $this->assertEquals($expected, $copy->toArray());
+    }
+
+    /**
+     * @test
+     */
     public function can_init_from_sibling()
     {
         $source = [

@@ -52,7 +52,9 @@ class Fields
     {
         $this->setTables($source['tables']);
         $this->setBlocks($source['blocks']);
-        $this->setKeys(array_keys($source['values']));
+        $this->setKeys(
+            array_is_list($source['values']) ? $source['values'] : array_keys($source['values'])
+        );
     }
 
     protected function fromSibling(Fields $source) : void
@@ -246,6 +248,7 @@ class Fields
         }
 
         $this->keys = $keys;
+        $this->values = array_fill_keys($keys, null);
         return $this;
     }
 
