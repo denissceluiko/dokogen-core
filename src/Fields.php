@@ -189,6 +189,11 @@ class Fields
             $values = [$values];
         }
 
+        // Drop the first empty row
+        if (count($this->tableGroupValues[$name]) === 1 && $this->containsOnlyNull($this->tableGroupValues[$name][0])) {
+            $this->tableGroupValues[$name] = [];
+        }
+
         foreach ($values as $entry) {
             $newRow = [];
 
@@ -211,6 +216,11 @@ class Fields
 
         if (!array_is_list($values)) {
             $values = [$values];
+        }
+
+        // Drop the first empty row
+        if (count($this->blockGroupValues[$name]) === 1 && $this->containsOnlyNull($this->blockGroupValues[$name][0])) {
+            $this->blockGroupValues[$name] = [];
         }
 
         foreach ($values as $entry) {
@@ -256,6 +266,9 @@ class Fields
             }
 
             $this->tableGroups[$name] = $columns;
+            
+            // Add the first element.
+            $this->tableGroupValues[$name][] = array_fill_keys($columns, null);
         }
         
         return $this;
@@ -272,6 +285,9 @@ class Fields
             }
 
             $this->blockGroups[$name] = $fields;
+
+            // Add the first element
+            $this->blockGroupValues[$name][] = array_fill_keys($fields, null);
         }
 
         return $this;
@@ -279,9 +295,9 @@ class Fields
 
     public function flush() : self
     {
-        $this->values = [];
-        $this->tableGroupValues = [];
-        $this->blockGroupValues = [];
+        $this->values = array_fill_keys($this->keys, null);
+        $this->tableGroupValues = $this->getBlankTables();
+        $this->blockGroupValues = $this->getBlankBlocks();
 
         return $this;
     }
@@ -364,9 +380,9 @@ class Fields
     public function toArray() : array
     {
         return [
-            'blocks'    => $this->blockGroupValues,
-            'tables'    => $this->tableGroupValues,
-            'values'    => $this->values,
+            'blocks'    => $this->blocks(),
+            'tables'    => $this->tables(),
+            'values'    => $this->values(),
         ];
     }
 
@@ -374,15 +390,37 @@ class Fields
      * Returns a blank fields object containing all the keys
      * of the current fields and all their values set to null.
      * 
-     * @return void
+     * @return array
      */
     public function blank() : array
     {
         return [
-            'blocks'    => array_map(fn($block) => array_fill_keys($block, null), $this->blockGroups),
-            'tables'    => array_map(fn($table) => array_fill_keys($table, null), $this->tableGroups),
+            'blocks'    => $this->getBlankBlocks(),
+            'tables'    => $this->getBlankTables(),
             'values'    => array_fill_keys($this->keys, null),
         ];
+    }
+
+    public function getBlankBlocks() : array
+    {
+        $blocks = [];
+
+        foreach ($this->blockGroups as $block => $fields) {
+            $blocks[$block][] = array_fill_keys($fields, null);
+        }
+
+        return $blocks;
+    }
+
+    public function getBlankTables() : array
+    {
+        $tables = [];
+
+        foreach ($this->tableGroups as $table => $rows) {
+            $tables[$table][] = array_fill_keys($rows, null);
+        }
+
+        return $tables;
     }
 
     public function isFormatted(array $data)
@@ -397,5 +435,15 @@ class Fields
             array_map(fn($key) => $prefix . $key, array_keys($array)),
             $array
         );
+    }
+
+    public function containsOnlyNull(array $array): bool
+    {
+        foreach ($array as $key => $val) {
+            if (!is_null($val)) 
+                return false;
+        }
+
+        return true;
     }
 }

@@ -113,6 +113,36 @@ final class FieldsTest extends TestCase
     /**
      * @test
      */
+    public function can_init_tables()
+    {
+        $source = [
+            'table__account.id', 
+            'table__account.name', 
+            'table__account.number',
+        ];
+
+        $expected = [
+            'tables' => [
+                'account' => [
+                    [
+                        'id' => null, 
+                        'name' => null, 
+                        'number' => null,
+                    ],
+                ],
+            ],
+            'values' => [],
+            'blocks' => [],
+        ];
+
+        $fields = Fields::init($source);
+
+        $this->assertEquals($expected, $fields->toArray());
+    }
+
+    /**
+     * @test
+     */
     public function can_fill_tables()
     {
         $source = [
@@ -181,6 +211,36 @@ final class FieldsTest extends TestCase
 
         $fields = Fields::init($source)->fillTable('account', $data);
         $fields->fillTable('account2', $data);
+
+        $this->assertEquals($expected, $fields->toArray());
+    }
+
+    /**
+     * @test
+     */
+    public function can_init_blocks()
+    {
+        $source = [
+            'block__customer', 
+            'block__customer.name', 
+            'block__customer.address', 
+            '/block__customer', 
+        ];
+
+        $expected = [
+            'blocks' => [
+                'customer' => [
+                    [
+                        'name' => null,
+                        'address' => null,
+                    ]
+                ],
+            ],
+            'values' => [],
+            'tables' => [],
+        ];
+
+        $fields = Fields::init($source);
 
         $this->assertEquals($expected, $fields->toArray());
     }
@@ -422,9 +482,26 @@ final class FieldsTest extends TestCase
         ];
 
         $expected = [
-            'values' => [],
-            'tables' => [],
-            'blocks' => [],
+            'values' => [
+                'name' => null,
+            ],
+            'tables' => [
+                'account' => [
+                    [
+                        'id' => null, 
+                        'name' => null, 
+                        'number' => null,
+                    ]
+                ],
+            ],
+            'blocks' => [
+                'customer' => [
+                    [
+                        'name' => null,
+                        'address' => null,
+                    ]
+                ],
+            ],
         ];
 
         $fields = Fields::init($source)->fill($data);
@@ -457,15 +534,19 @@ final class FieldsTest extends TestCase
             ],
             'tables' => [
                 'account' => [
-                    'id' => null,
-                    'name' => null,
-                    'number' => null,
+                    [
+                        'id' => null,
+                        'name' => null,
+                        'number' => null,
+                    ]
                 ],
             ],
             'blocks' => [
                 'customer' => [
-                    'name' => null,
-                    'address' => null,
+                    [
+                        'name' => null,
+                        'address' => null,
+                    ]
                 ],
             ],
         ];
@@ -480,7 +561,7 @@ final class FieldsTest extends TestCase
      */
     public function can_init_from_array()
     {
-        $expected = [
+        $source = [
             'values' => [
                 'name' => null,
                 'title' => null,
@@ -500,7 +581,31 @@ final class FieldsTest extends TestCase
             ],
         ];
 
-        $fields = Fields::init($expected);
+        $expected = [
+            'values' => [
+                'name' => null,
+                'title' => null,
+            ],
+            'tables' => [
+                'account' => [
+                    [
+                        'id' => null,
+                        'name' => null,
+                        'number' => null,
+                    ]
+                ],
+            ],
+            'blocks' => [
+                'customer' => [
+                    [
+                        'name' => null,
+                        'address' => null,
+                    ]
+                ],
+            ],
+        ];
+
+        $fields = Fields::init($source);
 
         $this->assertEquals($expected, $fields->blank());
     }
@@ -511,7 +616,7 @@ final class FieldsTest extends TestCase
      */
     public function can_init_from_sibling()
     {
-        $expected = [
+        $source = [
             'values' => [
                 'name' => null,
                 'title' => null,
@@ -531,7 +636,31 @@ final class FieldsTest extends TestCase
             ],
         ];
 
-        $original = Fields::init($expected);
+        $expected = [
+            'values' => [
+                'name' => null,
+                'title' => null,
+            ],
+            'tables' => [
+                'account' => [
+                    [
+                        'id' => null,
+                        'name' => null,
+                        'number' => null,
+                    ]
+                ],
+            ],
+            'blocks' => [
+                'customer' => [
+                    [
+                        'name' => null,
+                        'address' => null,
+                    ]
+                ],
+            ],
+        ];
+
+        $original = Fields::init($source);
         $copy = Fields::init($original);
 
         $this->assertEquals($expected, $copy->blank());
