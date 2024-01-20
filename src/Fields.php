@@ -176,7 +176,10 @@ class Fields
         foreach ($values as $k => $v) {
             if (!in_array($k, $this->keys)) continue;
 
-            $this->values[$k] = $v;
+            $this->values[$k] = match(true) {
+                is_object($v) && method_exists($v, '__toString') => $v->__toString(),
+                default => $v,
+            };
         }
 
         return $this;
