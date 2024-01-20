@@ -205,7 +205,10 @@ class Fields
             foreach ($entry as $column => $value) {
                 if (!in_array($column, $this->tableGroups[$name])) continue;
                 
-                $newRow[$column] = $value;
+                $newRow[$column] = match(true) {
+                    is_object($value) && method_exists($value, '__toString') => $value->__toString(),
+                    default => $value,
+                };
             }
             
             $this->tableGroupValues[$name][] = $newRow;
@@ -234,7 +237,10 @@ class Fields
             foreach ($entry as $field => $value) {
                 if (!in_array($field, $this->blockGroups[$name])) continue;
                 
-                $newCopy[$field] = $value;
+                $newCopy[$field] = match(true) {
+                    is_object($value) && method_exists($value, '__toString') => $value->__toString(),
+                    default => $value,
+                };
             }
             
             $this->blockGroupValues[$name][] = $newCopy;
